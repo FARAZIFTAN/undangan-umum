@@ -5,6 +5,8 @@ import QRCode from 'qrcode';
 function App() {
   const [showSuccess, setShowSuccess] = useState(false);
 
+  const isViewer = new URLSearchParams(window.location.search).get('viewer') === 'true';
+
   const eventDetails = {
     university: "Universitas Logistik dan Bisnis Internasional",
     date: "Rabu, 26 November 2025",
@@ -32,7 +34,7 @@ function App() {
   };
 
   const handleDownloadQR = async () => {
-    const url = window.location.href;
+    const url = `${window.location.href}?viewer=true`;
     try {
       const qrDataURL = await QRCode.toDataURL(url, {
         color: {
@@ -131,21 +133,25 @@ function App() {
             </div>
 
             <div className="pt-4 space-y-3">
-              <button
-                onClick={handleShare}
-                className="w-full bg-gradient-to-r from-purple-400 to-indigo-400 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold py-5 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2 active:scale-95 text-sm sm:text-base"
-              >
-                <Share2 className="w-5 h-5" />
-                <span>Bagikan Undangan</span>
-              </button>
+              {!isViewer && (
+                <>
+                  <button
+                    onClick={handleShare}
+                    className="w-full bg-gradient-to-r from-purple-400 to-indigo-400 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold py-5 px-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-2 active:scale-95 text-sm sm:text-base"
+                  >
+                    <Share2 className="w-5 h-5" />
+                    <span>Bagikan Undangan</span>
+                  </button>
 
-              <button
-                onClick={handleDownloadQR}
-                className="w-full bg-white hover:bg-gray-50 text-gray-700 font-semibold py-5 px-8 rounded-2xl border-2 border-purple-200 hover:border-purple-300 transition-all duration-300 flex items-center justify-center space-x-2 active:scale-95 text-sm sm:text-base shadow-md hover:shadow-lg"
-              >
-                <Download className="w-5 h-5" />
-                <span>Unduh QR</span>
-              </button>
+                  <button
+                    onClick={handleDownloadQR}
+                    className="w-full bg-white hover:bg-gray-50 text-gray-700 font-semibold py-5 px-8 rounded-2xl border-2 border-purple-200 hover:border-purple-300 transition-all duration-300 flex items-center justify-center space-x-2 active:scale-95 text-sm sm:text-base shadow-md hover:shadow-lg"
+                  >
+                    <Download className="w-5 h-5" />
+                    <span>Unduh QR</span>
+                  </button>
+                </>
+              )}
             </div>
           </div>
 
