@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Calendar, Clock, MapPin, Share2, Download } from 'lucide-react';
+import QRCode from 'qrcode';
 
 function App() {
   const [showSuccess, setShowSuccess] = useState(false);
@@ -21,7 +22,7 @@ function App() {
           title: 'Undangan Wisuda',
           text: text,
         });
-      } catch (err) {
+      } catch {
         console.log('Share cancelled');
       }
     } else {
@@ -30,10 +31,27 @@ function App() {
     }
   };
 
-  const handlePrint = () => {
-    window.print();
-    setShowSuccess(true);
-    setTimeout(() => setShowSuccess(false), 3000);
+  const handleDownloadQR = async () => {
+    const qrText = `🎓 Undangan Wisuda dan Penerimaan Mahasiswa Baru\n\nUniversitas: ${eventDetails.university}\nTanggal: ${eventDetails.date}\nWaktu: ${eventDetails.time}\nLokasi: ${eventDetails.location}\nWebsite: ${eventDetails.websiteUrl}\n\nDengan penuh rasa syukur dan kebahagiaan, kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara ini.`;
+    try {
+      const qrDataURL = await QRCode.toDataURL(qrText, {
+        color: {
+          dark: '#7C3AED', // Purple color
+          light: '#FFFFFF' // White background
+        },
+        margin: 2,
+        width: 256,
+        errorCorrectionLevel: 'M'
+      });
+      const link = document.createElement('a');
+      link.href = qrDataURL;
+      link.download = 'undangan-qr.png';
+      link.click();
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+    } catch {
+      // Ignore errors
+    }
   };
 
   return (
@@ -59,7 +77,7 @@ function App() {
           <div className="text-center space-y-4 slide-up delay-100">
             <p className="text-gray-600 leading-relaxed max-w-sm mx-auto px-4 text-sm sm:text-base">
               Dengan penuh rasa syukur dan kebahagiaan, kami mengundang Bapak/Ibu/Saudara/i
-              untuk menghadiri acara wisuda kami.
+              untuk menghadiri acara wisuda dan penerimaan mahasiswa baru.
             </p>
           </div>
 
@@ -122,11 +140,11 @@ function App() {
               </button>
 
               <button
-                onClick={handlePrint}
+                onClick={handleDownloadQR}
                 className="w-full bg-white hover:bg-gray-50 text-gray-700 font-semibold py-5 px-8 rounded-2xl border-2 border-purple-200 hover:border-purple-300 transition-all duration-300 flex items-center justify-center space-x-2 active:scale-95 text-sm sm:text-base shadow-md hover:shadow-lg"
               >
                 <Download className="w-5 h-5" />
-                <span>Simpan sebagai PDF</span>
+                <span>Unduh QR</span>
               </button>
             </div>
           </div>
@@ -164,7 +182,7 @@ function App() {
 
       {showSuccess && (
         <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-green-500 text-white px-6 py-3 rounded-full shadow-lg fade-in z-50">
-          <p className="text-sm font-medium">Siap untuk disimpan sebagai PDF!</p>
+          <p className="text-sm font-medium">QR siap diunduh!</p>
         </div>
       )}
     </div>
