@@ -32,9 +32,9 @@ function App() {
   };
 
   const handleDownloadQR = async () => {
-    const qrText = `🎓 Undangan Wisuda dan Penerimaan Mahasiswa Baru\n\nUniversitas: ${eventDetails.university}\nTanggal: ${eventDetails.date}\nWaktu: ${eventDetails.time}\nLokasi: ${eventDetails.location}\nWebsite: ${eventDetails.websiteUrl}\n\nDengan penuh rasa syukur dan kebahagiaan, kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara ini.`;
+    const url = window.location.href;
     try {
-      const qrDataURL = await QRCode.toDataURL(qrText, {
+      const qrDataURL = await QRCode.toDataURL(url, {
         color: {
           dark: '#7C3AED', // Purple color
           light: '#FFFFFF' // White background
